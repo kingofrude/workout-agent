@@ -6,7 +6,8 @@
   "scripts": {
     "init": "node scripts/init-database.js",
     "seed": "node scripts/seed-exercises.js",
-    "test": "node --test"
+    "test": "node --test tests/*.test.js",
+    "test:watch": "node --test --watch tests/*.test.js"
   },
   "dependencies": {
     "better-sqlite3": "^9.6.0",

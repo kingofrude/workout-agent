@@ -33,6 +33,7 @@ class ProgressAnalyzer {
     const improvement = this.calculateImprovement(logs);
 
     return {
+      totalSessions: logs.length,
       stats,
       trend,
       improvement

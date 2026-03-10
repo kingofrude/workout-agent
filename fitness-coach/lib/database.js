@@ -322,17 +322,17 @@ class FitnessDatabase {
   }
 
   // 训练记录方法
-  createWorkoutLog(userId, exerciseId, planId = null) {
+  createWorkoutLog({ userId, exerciseId, planId = null }) {
     const stmt = this.db.prepare(`
       INSERT INTO workout_logs (user_id, exercise_id, plan_id)
       VALUES (?, ?, ?)
     `);
 
     const info = stmt.run(userId, exerciseId, planId);
-    return info.lastInsertRowid;
+    return { lastInsertRowid: info.lastInsertRowid };
   }
 
-  saveWorkoutSet(logId, setNumber, setData) {
+  saveWorkoutSet({ logId, setNumber, weight, reps, rpe }) {
     const stmt = this.db.prepare(`
       INSERT INTO workout_sets (log_id, set_number, weight, reps, rpe)
       VALUES (?, ?, ?, ?, ?)
@@ -341,9 +341,9 @@ class FitnessDatabase {
     return stmt.run(
       logId,
       setNumber,
-      setData.weight,
-      setData.reps,
-      setData.rpe || null
+      weight,
+      reps,
+      rpe || null
     );
   }
 
@@ -397,7 +397,7 @@ class FitnessDatabase {
   }
 
   // 身体指标方法（shared.db）
-  saveBodyMetric(telegramId, metricType, value, unit, source = 'fitness', notes = null) {
+  saveBodyMetric({ telegramId, metricType, value, unit, source = 'fitness', notes = null }) {
     const sharedDbPath = this.dbPath.replace('fitness.db', 'shared.db');
     const sharedDb = new (require('better-sqlite3'))(sharedDbPath);
 
