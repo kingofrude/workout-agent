@@ -1,0 +1,22 @@
+{
+  "name": "fitness-coach-skill",
+  "version": "1.0.0",
+  "description": "OpenClaw 私人 AI 健身教练",
+  "main": "SKILL.md",
+  "scripts": {
+    "init": "node scripts/init-database.js",
+    "seed": "node scripts/seed-exercises.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "chartjs-node-canvas": "^4.1.6",
+    "chart.js": "^4.4.0",
+    "date-fns": "^3.6.0",
+    "cron": "^3.1.6"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
