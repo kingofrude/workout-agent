@@ -11,7 +11,7 @@
   "dependencies": {
     "better-sqlite3": "^9.6.0",
     "chartjs-node-canvas": "^4.1.6",
-    "chart.js": "^4.4.0",
+    "chart.js": "^3.9.1",
     "date-fns": "^3.6.0",
     "cron": "^3.1.6"
   },
