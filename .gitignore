@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Database files
+fitness-coach/data/*.db
+fitness-coach/data/*.db-shm
+fitness-coach/data/*.db-wal
+
+# Charts
+fitness-coach/data/charts/*.png
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.bak
+*.zip
+
+# Environment variables
+.env
+.env.local
