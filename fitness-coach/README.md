@@ -19,33 +19,77 @@
 
 ## 快速开始
 
-### 安装
+### 本地开发
 
 ```bash
 cd fitness-coach
 npm install
-```
 
-### 初始化数据库
-
-```bash
 # 创建数据库表
 npm run init
 
 # 导入动作数据
 npm run seed
+
+# 运行测试
+npm test
 ```
 
-### 在 OpenClaw 中启用
+### 部署到云端 OpenClaw
+
+#### 1. 上传 Skill
+
+**方法 A：通过 CLI（推荐）**
+
+```bash
+# 登录 OpenClaw
+openclaw login
+
+# 上传 Skill
+openclaw skills upload . --name fitness-coach
+```
+
+**方法 B：通过 Web 界面**
+
+1. 登录 [OpenClaw 控制台](https://app.openclaw.ai)
+2. 进入 Skills 管理页面
+3. 点击"Upload Skill"
+4. 上传整个 `fitness-coach` 文件夹（打包为 zip）
+
+#### 2. 初始化云端数据库
+
+```bash
+# 在云端环境运行初始化
+openclaw exec fitness-coach "npm run init"
+openclaw exec fitness-coach "npm run seed"
+```
+
+或者通过对话界面告诉 AI：
+```
+请在 fitness-coach skill 中运行：
+npm run init
+npm run seed
+```
+
+#### 3. 启用 Skill
 
 ```bash
 openclaw skills enable fitness-coach
 ```
 
-### 运行测试
+或通过 Web 界面点击"Enable"按钮。
+
+#### 4. 验证部署
 
 ```bash
-npm test
+# 检查 Skill 状态
+openclaw skills status fitness-coach
+
+# 查看日志
+openclaw logs fitness-coach
+
+# 运行测试
+openclaw exec fitness-coach "npm test"
 ```
 
 ## 项目结构
@@ -175,6 +219,69 @@ fitness-coach/
 
 **核心**：平板支撑
 
+## 使用指南
+
+### 与 AI 健身教练对话
+
+启用 Skill 后，直接在 OpenClaw 对话界面与 AI 交流：
+
+#### 创建训练计划
+```
+我想开始健身，目标是增肌，有哑铃和杠铃，每周能练 3 天（周一、周三、周五），我是中级水平
+```
+
+#### 查看今日计划
+```
+今天练什么？
+```
+
+#### 记录训练
+
+**标准格式**：
+```
+卧推 4组：80kg x10, 80kg x9, 75kg x10, 75kg x9
+感觉不错
+```
+
+**简化格式**：
+```
+卧推 4组 80kg x10
+```
+
+**自然语言**：
+```
+今天卧推做了 4 组，80 公斤 10 次，感觉很棒
+```
+
+#### 查看进度
+```
+我卧推进步了多少？显示最近一个月的
+```
+
+#### 生成图表
+```
+给我生成卧推的重量进步图表
+生成最近 3 个月的训练量趋势图
+```
+
+#### 记录体重
+```
+记录体重 75.5kg
+今天体重 76kg
+```
+
+#### 查看动作指导
+```
+深蹲怎么做？
+引体向上的正确姿势
+```
+
+#### 调整计划
+```
+把周一的卧推改成 5 组 8-10 次
+增加周三的训练组数
+```
+
 ## 开发
 
 ### 运行测试
@@ -193,6 +300,68 @@ npm run init
 # 重新导入动作数据
 npm run seed
 ```
+
+## 故障排查
+
+### Skill 无法正常工作
+
+```bash
+# 查看详细日志
+openclaw logs fitness-coach --tail 100
+
+# 重新安装依赖
+openclaw exec fitness-coach "npm install"
+
+# 重新初始化数据库
+openclaw exec fitness-coach "npm run init && npm run seed"
+
+# 运行测试验证
+openclaw exec fitness-coach "npm test"
+```
+
+### 常见问题
+
+**Q: 找不到动作数据？**
+```bash
+# 重新导入动作数据
+openclaw exec fitness-coach "npm run seed"
+```
+
+**Q: 图表生成失败？**
+- 检查是否有足够的训练记录（至少 2 次）
+- 确认 `data/charts/` 目录有写入权限
+
+**Q: 数据库锁定错误？**
+- SQLite 使用 WAL 模式，确保没有多个进程同时写入
+- 检查 `data/*.db-shm` 和 `data/*.db-wal` 文件
+
+**Q: 内存不足？**
+- Chart.js 图表生成需要内存，考虑减少图表数据点
+
+### 数据备份
+
+```bash
+# 备份训练数据
+openclaw download fitness-coach data/fitness.db ./backup/
+
+# 备份身体指标
+openclaw download fitness-coach data/shared.db ./backup/
+
+# 恢复数据
+openclaw upload fitness-coach ./backup/fitness.db data/fitness.db
+```
+
+## 注意事项
+
+1. **数据持久化**：云端的 `data/fitness.db` 和 `data/shared.db` 会持久化保存，不会因 Skill 重启而丢失
+
+2. **共享数据库**：`shared.db` 可被其他助理（营养、财务）访问，实现数据联动
+
+3. **权限要求**：确保 `data/` 和 `data/charts/` 目录有写入权限
+
+4. **依赖自动安装**：OpenClaw 会自动运行 `npm install`
+
+5. **定期备份**：建议定期备份数据库文件，避免数据丢失
 
 ## 未来计划
 
