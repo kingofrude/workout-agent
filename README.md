@@ -29,7 +29,7 @@ AI 驱动的健身助理系统，基于 [OpenClaw](https://docs.openclaw.ai/zh-C
 ### 在云端 OpenClaw 中使用
 
 1. 在 OpenClaw Skill 管理页面添加 GitHub Skill
-2. 输入仓库地址：`https://github.com/2474258962/workout-agent.git`
+2. 输入仓库地址：`https://github.com/kingofrude/workout-agent.git`
 3. 选择 `fitness-coach` 目录
 4. 等待自动安装依赖
 5. 初始化数据库：
@@ -43,7 +43,7 @@ AI 驱动的健身助理系统，基于 [OpenClaw](https://docs.openclaw.ai/zh-C
 ### 本地开发
 
 ```bash
-git clone https://github.com/2474258962/workout-agent.git
+git clone https://github.com/kingofrude/workout-agent.git
 cd workout-agent/fitness-coach
 npm install
 npm run init
