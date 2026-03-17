@@ -5,6 +5,7 @@
 ## 功能特性
 
 ### 核心功能
+
 - **个性化训练计划**：根据目标、经验和可用设备生成定制计划
 - **训练记录追踪**：记录每组重量、次数、RPE（自觉疲劳度）
 - **进度统计分析**：计算训练量、最大重量、平均次数等指标
@@ -13,6 +14,7 @@
 - **动作指导**：提供 15+ 动作的详细图文指导
 
 ### 训练分化方案
+
 - **推拉腿（PPL）**：适合 3 天或 6 天训练
 - **上下肢（Upper/Lower）**：适合 4 天训练
 - **健美分化（Bro Split）**：适合 5 天训练
@@ -65,13 +67,37 @@ openclaw exec fitness-coach "npm run seed"
 ```
 
 或者通过对话界面告诉 AI：
+
 ```
 请在 fitness-coach skill 中运行：
 npm run init
 npm run seed
 ```
 
-#### 3. 启用 Skill
+#### 3. 配置企业微信提醒（可选）
+
+如果需要通过企业微信接收训练提醒：
+
+```bash
+# 1. 获取企业微信机器人 webhook URL（见下方说明）
+# 2. 设置环境变量
+openclaw env set fitness-coach WECOM_WEBHOOK_URL="https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
+
+# 3. 启动提醒服务（后台运行）
+openclaw exec fitness-coach "npm start" --background
+
+# 或使用 PM2
+openclaw exec fitness-coach "npm install -g pm2 && pm2 start server.js --name fitness-reminder"
+```
+
+**获取企业微信 Webhook URL：**
+1. 在企业微信中创建群聊
+2. 群设置 -> 群机器人 -> 添加机器人
+3. 复制 Webhook 地址
+
+详细配置请参考：[企业微信提醒配置指南](./docs/REMINDER_SETUP.md)
+
+#### 4. 启用 Skill
 
 ```bash
 openclaw skills enable fitness-coach
@@ -79,7 +105,7 @@ openclaw skills enable fitness-coach
 
 或通过 Web 界面点击"Enable"按钮。
 
-#### 4. 验证部署
+#### 5. 验证部署
 
 ```bash
 # 检查 Skill 状态
@@ -90,6 +116,9 @@ openclaw logs fitness-coach
 
 # 运行测试
 openclaw exec fitness-coach "npm test"
+
+# 测试企业微信连接（如已配置）
+openclaw exec fitness-coach "node -e \"const W = require('./lib/wecom-notifier'); new W().test();\""
 ```
 
 ## 项目结构
@@ -144,6 +173,7 @@ fitness-coach/
 ## 工具函数
 
 ### create_plan
+
 创建个性化训练计划
 
 ```javascript
@@ -157,6 +187,7 @@ fitness-coach/
 ```
 
 ### log_workout
+
 记录训练数据
 
 ```javascript
@@ -173,6 +204,7 @@ fitness-coach/
 ```
 
 ### get_progress
+
 查询训练进度
 
 ```javascript
@@ -184,6 +216,7 @@ fitness-coach/
 ```
 
 ### generate_chart
+
 生成进度图表
 
 ```javascript
@@ -226,11 +259,13 @@ fitness-coach/
 启用 Skill 后，直接在 OpenClaw 对话界面与 AI 交流：
 
 #### 创建训练计划
+
 ```
 我想开始健身，目标是增肌，有哑铃和杠铃，每周能练 3 天（周一、周三、周五），我是中级水平
 ```
 
 #### 查看今日计划
+
 ```
 今天练什么？
 ```
@@ -238,45 +273,53 @@ fitness-coach/
 #### 记录训练
 
 **标准格式**：
+
 ```
 卧推 4组：80kg x10, 80kg x9, 75kg x10, 75kg x9
 感觉不错
 ```
 
 **简化格式**：
+
 ```
 卧推 4组 80kg x10
 ```
 
 **自然语言**：
+
 ```
 今天卧推做了 4 组，80 公斤 10 次，感觉很棒
 ```
 
 #### 查看进度
+
 ```
 我卧推进步了多少？显示最近一个月的
 ```
 
 #### 生成图表
+
 ```
 给我生成卧推的重量进步图表
 生成最近 3 个月的训练量趋势图
 ```
 
 #### 记录体重
+
 ```
 记录体重 75.5kg
 今天体重 76kg
 ```
 
 #### 查看动作指导
+
 ```
 深蹲怎么做？
 引体向上的正确姿势
 ```
 
 #### 调整计划
+
 ```
 把周一的卧推改成 5 组 8-10 次
 增加周三的训练组数
@@ -322,20 +365,24 @@ openclaw exec fitness-coach "npm test"
 ### 常见问题
 
 **Q: 找不到动作数据？**
+
 ```bash
 # 重新导入动作数据
 openclaw exec fitness-coach "npm run seed"
 ```
 
 **Q: 图表生成失败？**
+
 - 检查是否有足够的训练记录（至少 2 次）
 - 确认 `data/charts/` 目录有写入权限
 
 **Q: 数据库锁定错误？**
+
 - SQLite 使用 WAL 模式，确保没有多个进程同时写入
 - 检查 `data/*.db-shm` 和 `data/*.db-wal` 文件
 
 **Q: 内存不足？**
+
 - Chart.js 图表生成需要内存，考虑减少图表数据点
 
 ### 数据备份

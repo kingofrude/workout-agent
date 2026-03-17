@@ -51,6 +51,17 @@ module.exports = async function createPlan(args, context) {
 
     db.close();
 
+    // 5. 重新加载提醒设置（如果提醒服务正在运行）
+    try {
+      const { scheduler } = require('../server');
+      if (scheduler) {
+        scheduler.reload(telegramId);
+      }
+    } catch (error) {
+      // 提醒服务未运行，忽略错误
+      console.log('⚠️  提醒服务未运行，跳过提醒设置');
+    }
+
     return {
       success: true,
       message: `训练计划创建成功！已为你生成 ${savedPlans.length} 天的训练安排。`,
